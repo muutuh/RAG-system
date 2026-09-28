@@ -1,0 +1,22 @@
+# Fixed project name, so the volume is always "rag_pgdata" even if the folder moves.
+name: rag
+
+services:
+  db:
+    # Official Postgres 17 with the pgvector extension pre-installed.
+    image: pgvector/pgvector:pg17
+    environment:
+      # Compose reads these from the .env file next to this one.
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      # 127.0.0.1 = reachable from this PC only, not from your network.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Named volume: the data lives outside the container, so it survives
+      # `docker compose down` and restarts. Only `down -v` deletes it.
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
